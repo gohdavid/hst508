@@ -138,7 +138,7 @@ G_{t+1}&amp;=\frac{1}{2N}(1-\mu)^2\\&amp;+\frac{1}{2N}\mu^2\\&amp;+\left(1-\frac
 <blockquote class="blockquote">
 <p>Expand the obtained expression while dropping the terms higher than the first power of or <span class="math inline">\(1/N\)</span>. Obtain an expression for the steady state heterozygosity <span class="math inline">\(H_{ss}\)</span> in the two-allele model. How does the change in heterozygosity in one generation subject to mutations and drift compare to the case due to drift only?</p>
 </blockquote>
-<p>We drop terms higher than the first power of <span class="math inline">\(\mu\)</span> or <span class="math inline">\(\frac{1}{2N}\)</span> since <span class="math inline">\(\mu \ll 1\)</span> and <span class="math inline">\(N \gg 1\)</span>.</p>
+<p>We drop terms higher than the first power of <span class="math inline">\(\mu\)</span> or <span class="math inline">\(\frac{1}{2N}\)</span> since <span class="math inline">\(\mu \ll 1\)</span> and <span class="math inline">\(N \gg 1\)</span>, including <span class="math inline">\(\frac{\mu}{N}\)</span>.</p>
 <ul>
 <li><span class="math inline">\((1-\mu)^2 \approx 1-2\mu\)</span></li>
 <li><span class="math inline">\(\mu^2 \approx 0\)</span></li>
@@ -178,7 +178,7 @@ H_{ss}&amp;=\frac{2\mu}{\frac{1}{2N}+4\mu}
 \Delta H_t^\mathrm{M+D}&amp;= \underbrace{-\frac{H_t}{2N}}_{\text{Drift}}\ \underbrace{\vphantom{-\frac{H_t}{2N}}-4\mu H_t+2\mu}_{\text{Mutation}}\\
 \end{aligned}
 \]</span></p>
-<p>The reversible mutation adds a <span class="math inline">\(-4\mu H_t+2\mu\)</span> term to the change in heterozygosity in one generation.</p>
+<p>The reversible mutation adds a <span class="math inline">\((-4\mu H_t+2\mu)\)</span> term to the change in heterozygosity in one generation.</p>
 </section>
 <section id="problem-1-c" class="level2">
 <h2 class="anchored" data-anchor-id="problem-1-c">Problem 1 C</h2>
@@ -205,6 +205,24 @@ G_{t+1} &amp;= \frac{1}{2N}(1-2\mu)\\
 &amp;+\left(1-\frac{1}{2N}\right)(1-G_t)\mu
 \end{aligned}
 \]</span></p>
+<p>This follows the exact same result as before, ignoring <span class="math inline">\(\mu/N\)</span> terms:</p>
+<p><span class="math display">\[
+\begin{aligned}
+1-H_{t+1}&amp;=\frac{1}{2N}+\left(1-\frac{1}{2N}-2\mu\right)(1-H_t)+2\mu H_t\\
+&amp;=\frac{1}{2N}+1-\frac{1}{2N}-2\mu-H_t+\frac{1}{2N}H_t+ 2\mu H_t+2\mu H_t\\
+H_{t+1}&amp;=2\mu+H_t-\frac{1}{2N}H_t- 2\mu H_t-2\mu H_t\\
+\Delta H_{t} &amp;=2\mu+\left(-\frac{1}{2N}- 4\mu\right)H_t\\
+0 &amp;=2\mu+\left(-\frac{1}{2N}- 4\mu\right)H_{ss}\\
+H_{ss}&amp;=\frac{2\mu}{\frac{1}{2N}+4\mu}
+\end{aligned}
+\]</span></p>
+<p>The steady state heterozygosity is independent of the number of alleles <span class="math inline">\(k\)</span>. This is not intuitive. My rationalization is that this arises from the rate being equal for all possible mutations (such that <span class="math inline">\(A_j \to A_i\)</span> is possible even for <span class="math inline">\(j\gg i\)</span>) and from our assumptions that <span class="math inline">\(\mu^2\)</span> can be neglected. If the mutation rate <span class="math inline">\(\mu\)</span> were to be greater, then we would observe a dependency on <span class="math inline">\(k\)</span>.</p>
+<div class="quarto-figure quarto-figure-center">
+<figure class="figure">
+<p><img src="pset_1_assets/ReversibleAllele.jpg" class="img-fluid figure-img" width="300"></p>
+</figure>
+</div>
+<p>For <span class="math inline">\(k=2\)</span>, <span class="math inline">\(H_{ss}=\frac{2\mu}{\frac{1}{2N}+4\mu}\)</span>. For <span class="math inline">\(k\to \infty\)</span>, <span class="math inline">\(H_{ss}=\frac{2\mu}{\frac{1}{2N}+4\mu}\)</span>. This is conceptually different to the infinite allele model, since any allele is accessible by a single-step mutation with the same rate <span class="math inline">\(\mu\)</span>.</p>
 </section>
 </section>
 <section id="problem-2-simulations-of-genetic-drift-8-points" class="level1">
@@ -268,34 +286,50 @@ G_{t+1} &amp;= \frac{1}{2N}(1-2\mu)\\
 <p>Simulate 1000 trajectories, keeping a record of the fixation time for each simulation. Compute the mean time to fixation and compare it to <span class="math inline">\(N\)</span>. You can run your simulations at 3-5 different values of <span class="math inline">\(N\)</span> to establish this dependence better.</p>
 </blockquote>
 <p><span class="math display">\[H_{t}=H_0\left(1-\frac{1}{2N}\right)^{t}\approx H_0 \exp\left[{-\frac{t}{2N}}\right]\]</span></p>
-<div class="cell" data-execution_count="654">
+<div class="cell">
 <div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>t_dct <span class="op">=</span> {}</span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> N <span class="kw">in</span> [<span class="dv">100</span>,<span class="dv">500</span>,<span class="dv">1000</span>,<span class="dv">5000</span>,<span class="dv">10000</span>]:</span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>    t_fixation_or_loss <span class="op">=</span> []</span>
-<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="dv">10000</span>)):</span>
-<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>        p_lst,_ <span class="op">=</span> drift(N,<span class="fl">0.5</span>)</span>
-<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        t_fixation_or_loss.append(<span class="bu">len</span>(p_lst))</span>
-<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    arr <span class="op">=</span> np.array(t_fixation_or_loss)</span>
-<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    np.savetxt(<span class="ss">f"./20230916_time_to_fixation/</span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">"</span>,arr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>Ns <span class="op">=</span> [<span class="dv">100</span>,<span class="dv">500</span>,<span class="dv">1000</span>]</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> N <span class="kw">in</span> Ns:</span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    t_fixation_or_loss <span class="op">=</span> []</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> _ <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="dv">1000</span>)):</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>        p_lst,_ <span class="op">=</span> drift(N,<span class="fl">0.5</span>)</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>        t_fixation_or_loss.append(<span class="bu">len</span>(p_lst))</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    arr <span class="op">=</span> np.array(t_fixation_or_loss)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    np.savetxt(<span class="ss">f"./20230916_time_to_fixation/</span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">"</span>,arr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell" data-execution_count="885">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>lst <span class="op">=</span> []</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> N <span class="kw">in</span> Ns:</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a>    arr <span class="op">=</span>  np.loadtxt(<span class="ss">f"./20230916_time_to_fixation/</span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a>    df <span class="op">=</span> pd.DataFrame(arr, columns<span class="op">=</span>[<span class="st">"TimeToFixation"</span>])</span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>    df[<span class="st">"N"</span>] <span class="op">=</span> N</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>    lst.append(df)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a>fixation_time_df <span class="op">=</span> pd.concat(lst)</span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a>sns.lineplot(fixation_time_df, x<span class="op">=</span><span class="st">"N"</span>, y<span class="op">=</span><span class="st">"TimeToFixation"</span>, errorbar<span class="op">=</span><span class="st">"se"</span>)</span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Population size $N$"</span>)</span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Mean time to fixation [Generations]"</span>)</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.ols(<span class="st">"TimeToFixation ~ N -1"</span>, data <span class="op">=</span> fixation_time_df)</span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> model.fit()</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a>fixation_time_df[<span class="st">"Predict"</span>] <span class="op">=</span> results.predict(fixation_time_df[<span class="st">"N"</span>])</span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="dv">550</span>,<span class="dv">750</span>,<span class="st">"$R^2$=</span><span class="sc">{:.3f}</span><span class="st"> (High Variance)"</span>.<span class="bu">format</span>(results.rsquared))</span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="dv">550</span>,<span class="dv">1250</span>,<span class="vs">r"$\bar T=A N+\varepsilon$"</span>.<span class="bu">format</span>(results.rsquared))</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="dv">550</span>,<span class="dv">1000</span>,<span class="st">"$A$=</span><span class="sc">{:.3f}</span><span class="st">"</span>.<span class="bu">format</span>(results.params[<span class="st">"N"</span>]))</span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a>ax.legend([<span class="st">"_"</span>,<span class="st">"Standard Error"</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
-<pre><code>100%|██████████| 10000/10000 [01:17&lt;00:00, 128.60it/s]
-100%|██████████| 10000/10000 [16:43&lt;00:00,  9.97it/s]
-  1%|          | 108/10000 [00:40&lt;1:10:54,  2.33it/s]</code></pre>
+<pre><code>/var/folders/_c/3843qt453ds6klt3y95rpjcw0000gn/T/ipykernel_40568/623593748.py:20: UserWarning: The label '_' of &lt;matplotlib.lines.Line2D object at 0x2c5cbeb10&gt; starts with '_'. It is thus excluded from the legend.
+  ax.legend(["_","Standard Error"])</code></pre>
 </div>
+<div class="cell-output cell-output-display" data-execution_count="885">
+<pre><code>&lt;matplotlib.legend.Legend at 0x2c5c86f10&gt;</code></pre>
 </div>
-<div class="cell" data-execution_count="652">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> N, lst <span class="kw">in</span> t_dct.items():</span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>    sns.histplot(lst, kde<span class="op">=</span> <span class="va">True</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="pset_1_files/figure-html/cell-6-output-1.png" class="img-fluid"></p>
+<p><img src="pset_1_files/figure-html/cell-6-output-3.png" class="img-fluid"></p>
 </div>
 </div>
-<div class="cell" data-execution_count="641">
-<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>t_fixation_or_loss[<span class="op">-</span><span class="dv">1</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="641">
-<pre><code>(1000, 2)</code></pre>
-</div>
-</div>
+<p>The mean time to fixation is proportional to the population size. This result aligns with our estimates from the characteristic time <span class="math inline">\(\tau = 2N\)</span> from the exponential decay of the heterozygosity.</p>
 </section>
 <section id="problem-2-c" class="level1">
 <h1>Problem 2 c</h1>
@@ -303,14 +337,14 @@ G_{t+1} &amp;= \frac{1}{2N}(1-2\mu)\\
 <p>Plot 10 individual trajectories of heterozygosity vs.&nbsp;time on a single graph. In addition, for each time point, compute the average heterozygosity by averaging over all 1000 trajectories and plot the average heterozygosity vs time. To better see the exponential decay of heterozygosity you can plot the log of heterozygosity vs time. Measure the rate of decay of heterozygosity (the slope on the log-linear plot). Compare it to N.</p>
 </blockquote>
 <div class="cell" data-execution_count="516">
-<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="dv">10</span>)):</span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    p_lst, _ <span class="op">=</span> drift(<span class="dv">100</span>,<span class="fl">0.5</span>)</span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>    ax.plot(p_lst)</span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Frequency of allele $A_1$, $p$"</span>)</span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Generations"</span>)</span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">1</span>,linestyle<span class="op">=</span><span class="st">"--"</span>, color<span class="op">=</span><span class="st">"gray"</span>)</span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">0</span>, linestyle<span class="op">=</span><span class="st">"--"</span>, color<span class="op">=</span><span class="st">"gray"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="dv">10</span>)):</span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    p_lst, _ <span class="op">=</span> drift(<span class="dv">100</span>,<span class="fl">0.5</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    ax.plot(p_lst)</span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Frequency of allele $A_1$, $p$"</span>)</span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Generations"</span>)</span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">1</span>,linestyle<span class="op">=</span><span class="st">"--"</span>, color<span class="op">=</span><span class="st">"gray"</span>)</span>
+<span id="cb9-8"><a href="#cb9-8" aria-hidden="true" tabindex="-1"></a>ax.axhline(<span class="dv">0</span>, linestyle<span class="op">=</span><span class="st">"--"</span>, color<span class="op">=</span><span class="st">"gray"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>100%|██████████| 10/10 [00:00&lt;00:00, 120.73it/s]</code></pre>
 </div>
@@ -318,45 +352,45 @@ G_{t+1} &amp;= \frac{1}{2N}(1-2\mu)\\
 <pre><code>&lt;matplotlib.lines.Line2D at 0x29b4293d0&gt;</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="pset_1_files/figure-html/cell-8-output-3.png" class="img-fluid"></p>
+<p><img src="pset_1_files/figure-html/cell-7-output-3.png" class="img-fluid"></p>
 </div>
 </div>
 <div class="cell" data-execution_count="635">
-<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>lst <span class="op">=</span> []</span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="dv">1000</span>)):</span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    p_lst, Ht_lst <span class="op">=</span> drift(<span class="dv">100</span>,<span class="fl">0.5</span>)</span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>    lst.append(Ht_lst)</span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>lens <span class="op">=</span> np.array([<span class="bu">len</span>(i) <span class="cf">for</span> i <span class="kw">in</span> lst])</span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Mask of valid places in each row</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> np.arange(lens.<span class="bu">max</span>()) <span class="op">&lt;</span> lens[:,<span class="va">None</span>]</span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>out <span class="op">=</span> np.zeros(mask.shape)</span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>out[mask] <span class="op">=</span> np.concatenate(lst)</span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>mean_heterozygosity <span class="op">=</span> out.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a>log_mean_heterozygosity <span class="op">=</span> np.log(mean_heterozygosity)</span>
-<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
-<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>ax.plot(mean_heterozygosity)</span>
-<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Heterozygosity $H_t$"</span>)</span>
-<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Generations"</span>)</span>
-<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
-<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a>ax.plot(log_mean_heterozygosity)</span>
-<span id="cb13-24"><a href="#cb13-24" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r"Log heterozygosity $\log\left[H_t\right]$"</span>)</span>
-<span id="cb13-25"><a href="#cb13-25" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Generations"</span>)</span>
-<span id="cb13-26"><a href="#cb13-26" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-27"><a href="#cb13-27" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-28"><a href="#cb13-28" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
-<span id="cb13-29"><a href="#cb13-29" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"Log"</span>] <span class="op">=</span> log_mean_heterozygosity</span>
-<span id="cb13-30"><a href="#cb13-30" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"Generations"</span>] <span class="op">=</span> np.arange(<span class="dv">1</span>,<span class="bu">len</span>(mean_heterozygosity)<span class="op">+</span><span class="dv">1</span>)</span>
-<span id="cb13-31"><a href="#cb13-31" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.ols(<span class="st">"Log ~ Generations"</span>, data <span class="op">=</span> df[:<span class="op">-</span><span class="dv">250</span>])</span>
-<span id="cb13-32"><a href="#cb13-32" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> model.fit()</span>
-<span id="cb13-33"><a href="#cb13-33" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb13-34"><a href="#cb13-34" aria-hidden="true" tabindex="-1"></a>ax.plot(results.predict(df[<span class="st">"Generations"</span>]))</span>
-<span id="cb13-35"><a href="#cb13-35" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="dv">1000</span>,<span class="op">-</span><span class="dv">2</span>,<span class="st">"$R^2$=</span><span class="sc">{:.2}</span><span class="st">"</span>.<span class="bu">format</span>(results.rsquared))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>lst <span class="op">=</span> []</span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> _ <span class="kw">in</span> tqdm(<span class="bu">range</span>(<span class="dv">1000</span>)):</span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    p_lst, Ht_lst <span class="op">=</span> drift(<span class="dv">100</span>,<span class="fl">0.5</span>)</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>    lst.append(Ht_lst)</span>
+<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a>lens <span class="op">=</span> np.array([<span class="bu">len</span>(i) <span class="cf">for</span> i <span class="kw">in</span> lst])</span>
+<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Mask of valid places in each row</span></span>
+<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>mask <span class="op">=</span> np.arange(lens.<span class="bu">max</span>()) <span class="op">&lt;</span> lens[:,<span class="va">None</span>]</span>
+<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a>out <span class="op">=</span> np.zeros(mask.shape)</span>
+<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a>out[mask] <span class="op">=</span> np.concatenate(lst)</span>
+<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a>mean_heterozygosity <span class="op">=</span> out.mean(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a>log_mean_heterozygosity <span class="op">=</span> np.log(mean_heterozygosity)</span>
+<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-17"><a href="#cb12-17" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb12-18"><a href="#cb12-18" aria-hidden="true" tabindex="-1"></a>ax.plot(mean_heterozygosity)</span>
+<span id="cb12-19"><a href="#cb12-19" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="st">"Heterozygosity $H_t$"</span>)</span>
+<span id="cb12-20"><a href="#cb12-20" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Generations"</span>)</span>
+<span id="cb12-21"><a href="#cb12-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-22"><a href="#cb12-22" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb12-23"><a href="#cb12-23" aria-hidden="true" tabindex="-1"></a>ax.plot(log_mean_heterozygosity)</span>
+<span id="cb12-24"><a href="#cb12-24" aria-hidden="true" tabindex="-1"></a>ax.set_ylabel(<span class="vs">r"Log heterozygosity $\log\left[H_t\right]$"</span>)</span>
+<span id="cb12-25"><a href="#cb12-25" aria-hidden="true" tabindex="-1"></a>ax.set_xlabel(<span class="st">"Generations"</span>)</span>
+<span id="cb12-26"><a href="#cb12-26" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-27"><a href="#cb12-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-28"><a href="#cb12-28" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb12-29"><a href="#cb12-29" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"Log"</span>] <span class="op">=</span> log_mean_heterozygosity</span>
+<span id="cb12-30"><a href="#cb12-30" aria-hidden="true" tabindex="-1"></a>df[<span class="st">"Generations"</span>] <span class="op">=</span> np.arange(<span class="dv">1</span>,<span class="bu">len</span>(mean_heterozygosity)<span class="op">+</span><span class="dv">1</span>)</span>
+<span id="cb12-31"><a href="#cb12-31" aria-hidden="true" tabindex="-1"></a>model <span class="op">=</span> smf.ols(<span class="st">"Log ~ Generations"</span>, data <span class="op">=</span> df[:<span class="op">-</span><span class="dv">250</span>])</span>
+<span id="cb12-32"><a href="#cb12-32" aria-hidden="true" tabindex="-1"></a>results <span class="op">=</span> model.fit()</span>
+<span id="cb12-33"><a href="#cb12-33" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb12-34"><a href="#cb12-34" aria-hidden="true" tabindex="-1"></a>ax.plot(results.predict(df[<span class="st">"Generations"</span>]))</span>
+<span id="cb12-35"><a href="#cb12-35" aria-hidden="true" tabindex="-1"></a>ax.text(<span class="dv">1000</span>,<span class="op">-</span><span class="dv">2</span>,<span class="st">"$R^2$=</span><span class="sc">{:.2}</span><span class="st">"</span>.<span class="bu">format</span>(results.rsquared))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stderr">
 <pre><code>100%|██████████| 1000/1000 [00:07&lt;00:00, 127.22it/s]
 /var/folders/_c/3843qt453ds6klt3y95rpjcw0000gn/T/ipykernel_40568/380761567.py:15: RuntimeWarning: divide by zero encountered in log
@@ -366,21 +400,21 @@ G_{t+1} &amp;= \frac{1}{2N}(1-2\mu)\\
 <pre><code>Text(1000, -2, '$R^2$=0.99')</code></pre>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="pset_1_files/figure-html/cell-9-output-3.png" class="img-fluid"></p>
+<p><img src="pset_1_files/figure-html/cell-8-output-3.png" class="img-fluid"></p>
 </div>
 <div class="cell-output cell-output-display">
-<p><img src="pset_1_files/figure-html/cell-9-output-4.png" class="img-fluid"></p>
+<p><img src="pset_1_files/figure-html/cell-8-output-4.png" class="img-fluid"></p>
 </div>
 </div>
 <p>The log heterozygosity is largely linear with negative gradient and implies an exponential decay of the heterozygosity. Let the rate of decay of heterozygosity be <span class="math inline">\(B\)</span>. <span class="math display">\[H_{t}= A\exp{\left(Bt\right)}\]</span> <span class="math display">\[\log H_{t}= A + Bt\]</span></p>
-<p>From the formula derived in class for random mating, fixed population sizes, no mutation, no selection, we have: <span class="math display">\[H_{t}=H_0\left(1-\frac{1}{2N}\right)^{t}\approx H_0 \exp\left[{-\frac{t}{2N}}\right]\]</span></p>
+<p>For random mating, fixed population sizes, no mutation, no selection, we have: <span class="math display">\[H_{t}=H_0\left(1-\frac{1}{2N}\right)^{t}\approx H_0 \exp\left[{-\frac{t}{2N}}\right]\]</span></p>
 <p><span class="math display">\[\log H_{t}=\log H_0 -\frac{1}{2N}t\]</span></p>
 <p>Hence, we can get the population size from the rate of decay of heterozygosity <span class="math inline">\(B\)</span>: <span class="math display">\[B=-\frac{1}{2N} \implies N = -\frac{1}{2B}\]</span></p>
 <div class="cell" data-execution_count="638">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> results.params[<span class="st">"Generations"</span>]</span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(B)</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="op">-</span> <span class="dv">1</span><span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>B)</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>B <span class="op">=</span> results.params[<span class="st">"Generations"</span>]</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(B)</span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="op">-</span> <span class="dv">1</span><span class="op">/</span>(<span class="dv">2</span><span class="op">*</span>B)</span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="bu">print</span>(N)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>93.1803651678084</code></pre>
 </div>
@@ -394,33 +428,33 @@ G_{t+1} &amp;= \frac{1}{2N}(1-2\mu)\\
 <p>Consider an effect of changing population size on the time to fixation. Run simulations first at some <span class="math inline">\(N=N_1\)</span> and then change <span class="math inline">\(N\)</span> to <span class="math inline">\(N=N_2\)</span> for <span class="math inline">\(t_2\)</span> number of generations then back to <span class="math inline">\(N_1\)</span>. Try <span class="math inline">\(N_2\ll N_1\)</span>, e.g.&nbsp;<span class="math inline">\(N_2=N_1/10\)</span>. Make 1000 runs and compute the mean time to fixation. Try several <span class="math inline">\(N_1\)</span> and <span class="math inline">\(N_2\)</span>. How does decrease in the population size change the mean time to fixation? Compute <span class="math inline">\(N_\mathrm{eff}\)</span> for each parameters (<span class="math inline">\(N_1\)</span>, <span class="math inline">\(N_2\)</span>, <span class="math inline">\(t_2\)</span>), and correlated mean time to fixation with <span class="math inline">\(N_1\)</span>, <span class="math inline">\(N_2\)</span>, and <span class="math inline">\(N_\mathrm{eff}\)</span>. Interpret your findings.</p>
 </blockquote>
 <div class="cell" data-execution_count="574">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> driftVaryingPopulation(N0,p0,ratio,onset,t_2):</span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>    p0 <span class="op">=</span> <span class="fl">0.5</span></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>    n_chromosomes <span class="op">=</span> <span class="dv">2</span><span class="op">*</span>N0</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>    alleles <span class="op">=</span> np.random.choice([<span class="dv">1</span>,<span class="dv">2</span>],</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>                            size<span class="op">=</span>n_chromosomes,</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>                            p<span class="op">=</span>[p0,<span class="dv">1</span><span class="op">-</span>p0])</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>    p_lst <span class="op">=</span> [freq(alleles)]</span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>    Ht_lst <span class="op">=</span> [heterozygosity(alleles)]</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>    generation <span class="op">=</span> <span class="dv">1</span></span>
-<span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> p_lst[<span class="op">-</span><span class="dv">1</span>] <span class="op">!=</span> <span class="dv">0</span> <span class="kw">and</span> p_lst[<span class="op">-</span><span class="dv">1</span>] <span class="op">!=</span> <span class="dv">1</span>:</span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>        generation <span class="op">+=</span> <span class="dv">1</span></span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> generation <span class="op">&lt;=</span> onset <span class="kw">or</span> generation <span class="op">&gt;=</span> onset<span class="op">+</span>t_2:</span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>            alleles <span class="op">=</span> np.random.choice(alleles,</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>                            size<span class="op">=</span>n_chromosomes)</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>            alleles <span class="op">=</span> np.random.choice(alleles,</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>                            size<span class="op">=</span><span class="bu">round</span>(n_chromosomes<span class="op">/</span>ratio))</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>        p_lst.append(freq(alleles))</span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>        Ht_lst.append(heterozygosity(alleles))</span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> p_lst, Ht_lst</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> driftVaryingPopulation(N0,p0,ratio,onset,t_2):</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>    p0 <span class="op">=</span> <span class="fl">0.5</span></span>
+<span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>    n_chromosomes <span class="op">=</span> <span class="dv">2</span><span class="op">*</span>N0</span>
+<span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>    alleles <span class="op">=</span> np.random.choice([<span class="dv">1</span>,<span class="dv">2</span>],</span>
+<span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a>                            size<span class="op">=</span>n_chromosomes,</span>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>                            p<span class="op">=</span>[p0,<span class="dv">1</span><span class="op">-</span>p0])</span>
+<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>    p_lst <span class="op">=</span> [freq(alleles)]</span>
+<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>    Ht_lst <span class="op">=</span> [heterozygosity(alleles)]</span>
+<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>    generation <span class="op">=</span> <span class="dv">1</span></span>
+<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a>    <span class="cf">while</span> p_lst[<span class="op">-</span><span class="dv">1</span>] <span class="op">!=</span> <span class="dv">0</span> <span class="kw">and</span> p_lst[<span class="op">-</span><span class="dv">1</span>] <span class="op">!=</span> <span class="dv">1</span>:</span>
+<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a>        generation <span class="op">+=</span> <span class="dv">1</span></span>
+<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>        <span class="cf">if</span> generation <span class="op">&lt;=</span> onset <span class="kw">or</span> generation <span class="op">&gt;=</span> onset<span class="op">+</span>t_2:</span>
+<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>            alleles <span class="op">=</span> np.random.choice(alleles,</span>
+<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a>                            size<span class="op">=</span>n_chromosomes)</span>
+<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>        <span class="cf">else</span>:</span>
+<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>            alleles <span class="op">=</span> np.random.choice(alleles,</span>
+<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a>                            size<span class="op">=</span><span class="bu">round</span>(n_chromosomes<span class="op">/</span>ratio))</span>
+<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>        p_lst.append(freq(alleles))</span>
+<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>        Ht_lst.append(heterozygosity(alleles))</span>
+<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> p_lst, Ht_lst</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell" data-execution_count="624">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>p_lst, _ <span class="op">=</span> driftVaryingPopulation(<span class="dv">100</span>,<span class="fl">0.5</span>,<span class="dv">10</span>,<span class="dv">30</span>,<span class="dv">5</span>)</span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>plt.plot(p_lst)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>p_lst, _ <span class="op">=</span> driftVaryingPopulation(<span class="dv">100</span>,<span class="fl">0.5</span>,<span class="dv">10</span>,<span class="dv">30</span>,<span class="dv">5</span>)</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>plt.plot(p_lst)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display">
-<p><img src="pset_1_files/figure-html/cell-12-output-1.png" class="img-fluid"></p>
+<p><img src="pset_1_files/figure-html/cell-11-output-1.png" class="img-fluid"></p>
 </div>
 </div>
 </section>
@@ -429,6 +463,49 @@ G_{t+1} &amp;= \frac{1}{2N}(1-2\mu)\\
 <blockquote class="blockquote">
 <p>[Extra credit: +2 points] Plot the distribution of the fixation time for each <span class="math inline">\(N\)</span>. How broad is the distribution? Think of various ways to quantify this. Study the mean time to fixation as a function of the number K of alleles (types of individuals), starting with <span class="math inline">\(1/K\)</span> initial frequency.</p>
 </blockquote>
+<div class="cell" data-execution_count="762">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> N <span class="kw">in</span> <span class="bu">reversed</span>(Ns):</span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    arr <span class="op">=</span> np.loadtxt(<span class="ss">f"./20230916_time_to_fixation/</span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>    ax <span class="op">=</span> sns.histplot(arr, binwidth <span class="op">=</span> <span class="dv">200</span>, stat<span class="op">=</span><span class="st">"probability"</span>, label <span class="op">=</span> <span class="ss">f"N=</span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Probability"</span>)</span>
+<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Time to fixation"</span>)</span>
+<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a>plt.xlim([<span class="op">-</span><span class="dv">1000</span>, <span class="dv">11000</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="762">
+<pre><code>(-1000.0, 11000.0)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="pset_1_files/figure-html/cell-12-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<div class="cell" data-execution_count="761">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>fig, ax <span class="op">=</span> plt.subplots()</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> N <span class="kw">in</span> <span class="bu">reversed</span>(Ns):</span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>    arr <span class="op">=</span> np.loadtxt(<span class="ss">f"./20230916_time_to_fixation/</span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a>    sns.kdeplot(arr, label <span class="op">=</span> <span class="ss">f"N=</span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>ax.legend()</span>
+<span id="cb21-6"><a href="#cb21-6" aria-hidden="true" tabindex="-1"></a>plt.ylabel(<span class="st">"Probability"</span>)</span>
+<span id="cb21-7"><a href="#cb21-7" aria-hidden="true" tabindex="-1"></a>plt.xlabel(<span class="st">"Time to fixation"</span>)</span>
+<span id="cb21-8"><a href="#cb21-8" aria-hidden="true" tabindex="-1"></a>plt.xlim([<span class="op">-</span><span class="dv">1000</span>, <span class="dv">11000</span>])</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-display" data-execution_count="761">
+<pre><code>(-1000.0, 11000.0)</code></pre>
+</div>
+<div class="cell-output cell-output-display">
+<p><img src="pset_1_files/figure-html/cell-13-output-2.png" class="img-fluid"></p>
+</div>
+</div>
+<p>The mean and variance of the distribution increases with <span class="math inline">\(N\)</span>. We can quantify the broadness through the coefficient of variance.</p>
+<div class="cell" data-execution_count="901">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> N <span class="kw">in</span> <span class="bu">reversed</span>(Ns):</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>    arr <span class="op">=</span> np.loadtxt(<span class="ss">f"./20230916_time_to_fixation/</span><span class="sc">{</span>N<span class="sc">}</span><span class="ss">"</span>)</span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">print</span>(<span class="st">"N = </span><span class="sc">{}</span><span class="st">, "</span>.<span class="bu">format</span>(N), <span class="st">"CV = </span><span class="sc">{}</span><span class="st">"</span>.<span class="bu">format</span>(np.std(arr)<span class="op">/</span>np.mean(arr)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>N = 1000,  CV = 0.7536712324154138
+N = 500,  CV = 0.7510492725102286
+N = 100,  CV = 0.7179094134418806</code></pre>
+</div>
+</div>
 </section>
 
 </main>
