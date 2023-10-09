@@ -1,6 +1,5 @@
 *_files
 *.txt
 /.quarto/
-_output
 __pycache__
 .DS_Store
