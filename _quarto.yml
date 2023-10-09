@@ -1,0 +1,34 @@
+project:
+  output-dir: _output
+
+toc: true
+number-sections: true
+
+author: "David (davidgoh@mit.edu)"
+format:
+  pdf:
+      papersize: a4paper
+      pdf-engine: lualatex
+      include-in-header:
+          - text:
+              \usepackage{fontspec}
+              \usepackage{amsmath}
+      geometry:
+          - top=20mm
+          - left=20mm
+          - bottom=20mm
+          - right=20mm
+      link-citations: true
+      number-sections: true
+      number-depth: 2
+  html:
+    html-math-method: mathjax
+    include-in-header:
+      - text: |
+          <script>
+          window.MathJax = {
+            tex: {packages: {'[+]': ['physics']}
+          };
+          </script>
+execute:
+  echo: false
