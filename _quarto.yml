@@ -4,7 +4,7 @@ project:
 toc: true
 number-sections: true
 
-author: "David (davidgoh@mit.edu)"
+author: "David David (davidgoh@mit.edu)"
 format:
   pdf:
       papersize: a4paper
@@ -13,6 +13,7 @@ format:
           - text:
               \usepackage{fontspec}
               \usepackage{amsmath}
+              \usepackage{cancel}
       geometry:
           - top=20mm
           - left=20mm
@@ -21,6 +22,8 @@ format:
       link-citations: true
       number-sections: true
       number-depth: 2
+      fig-width: 4
+      fig-height: 4
   html:
     html-math-method: mathjax
     include-in-header:
@@ -30,5 +33,3 @@ format:
             tex: {packages: {'[+]': ['physics']}
           };
           </script>
-execute:
-  echo: false
