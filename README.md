@@ -3,3 +3,9 @@ Problem set repo for davidgoh@mit.edu
 - PDFs are in `./_output`
 - HW 1  at [pset_1.ipynb](pset_1.ipynb)
 - HW 2  at [pset_2.ipynb](pset_2.ipynb)
+## Environment
+```
+conda env create -f environment.yml -n quantgenomics -y
+conda activate quantgenomics
+poetry install
+```
